@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 
 
-def split_train_test(X: pd.DataFrame, y: pd.Series, train_proportion: float = .75) \
+def split_train_test(X: pd.DataFrame, y: pd.Series,
+                     train_proportion: float = .75) \
         -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
     """
     Randomly split given sample to a training- and testing sample
@@ -33,7 +34,17 @@ def split_train_test(X: pd.DataFrame, y: pd.Series, train_proportion: float = .7
         Responses of test samples
 
     """
-    raise NotImplementedError()
+    # Creating a dataframe with 75%
+    # values of original dataframe
+    train_set = X.sample(frac=train_proportion)
+    train_response = y.reindex_like(train_set)
+
+    # Creating dataframe with
+    # rest of the 25% values
+    test_set = X.drop(train_set.index)
+    test_response = y.reindex_like(test_set)
+
+    return train_set, train_response, test_set, test_response
 
 
 def confusion_matrix(a: np.ndarray, b: np.ndarray) -> np.ndarray:
