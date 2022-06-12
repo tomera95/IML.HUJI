@@ -72,8 +72,6 @@ class LinearRegression(BaseEstimator):
         responses : ndarray of shape (n_samples, )
             Predicted responses of given samples
         """
-        # todo: needed this if-else?
-
         if not self.include_intercept_:
             y_pred = X @ self.coefs_
         else:

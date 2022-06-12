@@ -6,7 +6,8 @@ from IMLearn import BaseEstimator
 
 
 def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
-                   scoring: Callable[[np.ndarray, np.ndarray, ...], float], cv: int = 5) -> Tuple[float, float]:
+                   scoring: Callable[[np.ndarray, np.ndarray, ...], float],
+                   cv: int = 5) -> Tuple[float, float]:
     """
     Evaluate metric by cross-validation for given estimator
 
@@ -37,4 +38,20 @@ def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
     validation_score: float
         Average validation score over folds
     """
-    raise NotImplementedError()
+    train_score = 0
+    validation_score = 0
+    folds = np.remainder(np.arange(len(X)), cv)
+    for k in range(cv):
+        train_k_x = X[folds != k]
+        train_k_y = y[folds != k]
+        validate_k_x = X[folds == k]
+        validate_k_y = y[folds == k]
+
+        estimator.fit(train_k_x, train_k_y)
+        train_k_pred = estimator.predict(train_k_x)
+        validate_k_pred = estimator.predict(validate_k_x)
+
+        train_score += scoring(train_k_y, train_k_pred)
+        validation_score += scoring(validate_k_y, validate_k_pred)
+
+    return train_score / cv, validation_score / cv
